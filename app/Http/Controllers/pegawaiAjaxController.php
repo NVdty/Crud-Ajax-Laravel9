@@ -16,7 +16,12 @@ class pegawaiAjaxController extends Controller
     public function index()
     {
         $data = Pegawai::orderBy('nama', 'asc');
-        return DataTables::of($data)->make(true);
+        return DataTables::of($data)
+        ->addIndexColumn()
+        ->addColumn('aksi', function($data){
+            return view('pegawai.tombol')->with('data', $data);
+        })
+        ->make(true);
     }
 
     /**
@@ -37,7 +42,27 @@ class pegawaiAjaxController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validasi = Validator::make($request->all(),[
+            'name' => 'required',
+            'email' => 'required|email',
+        ],[
+            'nama.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Email wajib benar',
+        ]);
+
+        if($validasi->fails()){
+            return response()->json(['errors' => $validasi->errors()]);
+        }else{
+            $data = [
+                'nama' => $request->nama,
+                'email' => $request->email
+            ];
+    
+            Pegawai::create($data);
+            return response()->json(['success' => "Berhasil menyimpan data"]);
+
+        }
     }
 
     /**
