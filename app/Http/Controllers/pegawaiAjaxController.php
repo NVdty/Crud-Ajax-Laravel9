@@ -44,7 +44,7 @@ class pegawaiAjaxController extends Controller
     public function store(Request $request)
     {
         $validasi = Validator::make($request->all(),[
-            'name' => 'required',
+            'nama' => 'required',
             'email' => 'required|email',
         ],[
             'nama.required' => 'Nama wajib diisi',
